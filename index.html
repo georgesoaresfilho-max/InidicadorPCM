@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Manutenção – Makro Engenharia</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Barlow+Condensed:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --azul:      #1B2B6B;
+  --azul2:     #243580;
+  --verm:      #E8351E;
+  --verde:     #1AAF5D;
+  --amarelo:   #F4B400;
+  --cinza-bg:  #EEF1F8;
+  --borda:     #D8DEF0;
+  --texto:     #1A1F3A;
+  --soft:      #6B7299;
+  --branco:    #FFFFFF;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { font-family:'Barlow',sans-serif; background:var(--cinza-bg); color:var(--texto); min-height:100vh; }
+
+/* ── HEADER ── */
+.header {
+  background: var(--azul);
+  padding: 0 36px;
+  height: 68px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top:0; z-index:100;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.2);
+}
+.logo { display:flex; align-items:center; gap:14px; }
+.logo-icon { width:38px; height:38px; }
+.logo-name { font-family:'Barlow Condensed',sans-serif; font-size:24px; font-weight:800; color:white; letter-spacing:1px; }
+.logo-name em { color:var(--verm); font-style:normal; }
+.header-right { text-align:right; }
+.header-title { font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; color:white; letter-spacing:0.5px; }
+.header-sub { font-size:11px; color:rgba(255,255,255,0.5); margin-top:2px; }
+.header-sub span { color:rgba(255,255,255,0.8); font-weight:600; }
+
+/* ── NAV ── */
+.nav {
+  background: var(--azul2);
+  border-bottom: 3px solid var(--verm);
+  padding: 0 36px;
+  display: flex; gap:4px; align-items: center;
+}
+.nav-btn {
+  padding: 10px 20px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px; font-weight:700; letter-spacing:0.5px;
+  color: rgba(255,255,255,0.55);
+  border:none; background:transparent; cursor:pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom:-3px;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+.nav-btn:hover { color:white; }
+.nav-btn.active { color:white; border-bottom-color:var(--verm); }
+
+/* ── PAGES ── */
+.page { display:none; padding:28px 36px 40px; }
+.page.active { display:block; }
+
+/* ── SECTION HEADER ── */
+.sec-head {
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:18px;
+}
+.sec-bar { width:4px; height:22px; background:var(--verm); border-radius:2px; }
+.sec-title {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:14px; font-weight:700;
+  color:var(--azul); letter-spacing:1px; text-transform:uppercase;
+}
+
+/* ── KPI CARDS ── */
+.kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px; }
+.kpi {
+  background:white; border-radius:10px;
+  padding:18px 20px; border:1px solid var(--borda);
+  box-shadow:0 2px 10px rgba(27,43,107,0.06);
+  position:relative; overflow:hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.kpi:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(27,43,107,0.10); }
+.kpi::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:4px; border-radius:10px 10px 0 0;
+}
+.kpi.k-azul::before   { background:var(--azul); }
+.kpi.k-verde::before  { background:var(--verde); }
+.kpi.k-verm::before   { background:var(--verm); }
+.kpi.k-amar::before   { background:var(--amarelo); }
+.kpi-lbl { font-size:10px; font-weight:700; color:var(--soft); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:6px; }
+.kpi-val { font-family:'Barlow Condensed',sans-serif; font-size:38px; font-weight:800; line-height:1; margin-bottom:4px; }
+.kpi.k-azul  .kpi-val { color:var(--azul); }
+.kpi.k-verde .kpi-val { color:var(--verde); }
+.kpi.k-verm  .kpi-val { color:var(--verm); }
+.kpi.k-amar  .kpi-val { color:var(--amarelo); }
+.kpi-desc { font-size:11px; color:var(--soft); }
+.kpi-ico { position:absolute; right:16px; bottom:14px; font-size:32px; opacity:0.08; }
+
+/* ── META BAR ── */
+.meta-card {
+  background:white; border-radius:10px; padding:18px 22px;
+  border:1px solid var(--borda); box-shadow:0 2px 10px rgba(27,43,107,0.06);
+  margin-bottom:20px;
+}
+.meta-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.meta-lbl { font-size:11px; font-weight:700; color:var(--soft); text-transform:uppercase; letter-spacing:0.8px; }
+.badge {
+  font-size:11px; font-weight:700; padding:4px 12px; border-radius:20px;
+  text-transform:uppercase; letter-spacing:0.5px;
+}
+.badge.abaixo { background:#FEE8E5; color:var(--verm); }
+.badge.ok     { background:#E6F9EE; color:var(--verde); }
+.track {
+  background:var(--cinza-bg); border-radius:6px; height:16px;
+  position:relative; overflow:hidden;
+}
+.fill {
+  height:100%; border-radius:6px;
+  background: linear-gradient(90deg, var(--azul), #3D5BD9);
+  transition: width 1.2s ease;
+}
+.fill.baixo { background: linear-gradient(90deg, var(--verm), #FF6B55); }
+.meta-line {
+  position:absolute; top:0; bottom:0; width:2px;
+  background:var(--amarelo); left:80%;
+}
+.meta-labels { display:flex; justify-content:space-between; margin-top:6px; font-size:11px; color:var(--soft); }
+
+/* ── CHARTS ROW ── */
+.charts-row { display:grid; grid-template-columns:1.5fr 1fr; gap:14px; margin-bottom:20px; }
+.card {
+  background:white; border-radius:10px; padding:18px 22px;
+  border:1px solid var(--borda); box-shadow:0 2px 10px rgba(27,43,107,0.06);
+}
+.card-title {
+  font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700;
+  color:var(--azul); text-transform:uppercase; letter-spacing:0.8px;
+  margin-bottom:14px; display:flex; align-items:center; gap:8px;
+}
+.card-title .dot { width:7px; height:7px; background:var(--verm); border-radius:50%; }
+
+/* Bar chart */
+.bar-list { display:flex; flex-direction:column; gap:8px; }
+.bar-row2 { display:flex; align-items:center; gap:8px; }
+.bar-nm { font-size:11px; color:var(--soft); width:150px; flex-shrink:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.bar-track2 { flex:1; background:var(--cinza-bg); border-radius:4px; height:20px; overflow:hidden; position:relative; }
+.bar-fill2 {
+  height:100%; border-radius:4px; display:flex; align-items:center; padding-left:8px;
+  transition: width 1s ease;
+}
+.bar-fill2.ok   { background:rgba(26,175,93,0.15); border-left:3px solid var(--verde); }
+.bar-fill2.warn { background:rgba(244,180,0,0.15);  border-left:3px solid var(--amarelo); }
+.bar-fill2.bad  { background:rgba(232,53,30,0.15);  border-left:3px solid var(--verm); }
+.bar-pct2 { font-size:11px; font-weight:700; }
+.bar-pct2.ok   { color:var(--verde); }
+.bar-pct2.warn { color:var(--amarelo); }
+.bar-pct2.bad  { color:var(--verm); }
+
+/* Donut */
+.donut-wrap { display:flex; align-items:center; justify-content:center; gap:20px; padding-top:4px; }
+.donut-svg { width:110px; height:110px; flex-shrink:0; }
+.legend { display:flex; flex-direction:column; gap:8px; }
+.leg-item { display:flex; align-items:center; gap:8px; }
+.leg-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.leg-lbl { font-size:12px; color:var(--soft); flex:1; }
+.leg-val { font-size:13px; font-weight:700; color:var(--texto); }
+
+/* ── TABLE ── */
+.table-card {
+  background:white; border-radius:10px; overflow:hidden;
+  border:1px solid var(--borda); box-shadow:0 2px 10px rgba(27,43,107,0.06);
+  margin-bottom:20px;
+}
+.table-head-bar {
+  padding:14px 20px; border-bottom:1px solid var(--borda);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.table-head-bar .t { font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; color:var(--azul); text-transform:uppercase; letter-spacing:0.8px; }
+.table-head-bar .s { font-size:11px; color:var(--soft); }
+table { width:100%; border-collapse:collapse; }
+thead tr { background:var(--azul); }
+thead th { padding:9px 14px; font-size:10px; font-weight:700; color:rgba(255,255,255,0.7); text-transform:uppercase; letter-spacing:0.8px; text-align:left; }
+tbody tr { border-bottom:1px solid var(--borda); transition:background 0.15s; }
+tbody tr:last-child { border-bottom:none; }
+tbody tr:hover { background:var(--cinza-bg); }
+tbody td { padding:9px 14px; font-size:12px; }
+.pill { display:inline-block; padding:2px 10px; border-radius:20px; font-size:10px; font-weight:700; }
+.pill.ok   { background:#E6F9EE; color:var(--verde); }
+.pill.warn { background:#FFF8E1; color:#C49000; }
+.pill.bad  { background:#FEE8E5; color:var(--verm); }
+
+/* ── OFENSORES ── */
+.ofens-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-bottom:20px; }
+.of-row { display:flex; align-items:center; gap:10px; padding:10px 14px; background:var(--cinza-bg); border-radius:8px; border:1px solid var(--borda); }
+.of-rank { font-family:'Barlow Condensed',sans-serif; font-size:22px; font-weight:800; color:var(--azul); width:32px; flex-shrink:0; }
+.of-info { flex:1; }
+.of-nm { font-size:13px; font-weight:600; color:var(--texto); }
+.of-bar-wrap { height:6px; background:white; border-radius:3px; margin-top:4px; overflow:hidden; }
+.of-bar { height:100%; border-radius:3px; background:var(--azul); }
+.of-bar.r1 { background:var(--verm); }
+.of-bar.r2 { background:#FF6B00; }
+.of-bar.r3 { background:var(--amarelo); }
+.of-cnt { font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:800; color:var(--azul); }
+
+/* ── LOADING ── */
+.loading {
+  position:fixed; inset:0; background:var(--azul);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  z-index:999; transition:opacity 0.5s;
+}
+.loading.hide { opacity:0; pointer-events:none; }
+.load-logo { font-family:'Barlow Condensed',sans-serif; font-size:36px; font-weight:800; color:white; margin-bottom:24px; }
+.load-logo em { color:var(--verm); font-style:normal; }
+.load-bar-track { width:200px; height:4px; background:rgba(255,255,255,0.2); border-radius:2px; overflow:hidden; }
+.load-bar-fill { height:100%; background:var(--verm); border-radius:2px; animation:loadanim 1.5s ease forwards; }
+@keyframes loadanim { from{width:0} to{width:100%} }
+.load-txt { font-size:12px; color:rgba(255,255,255,0.5); margin-top:12px; }
+
+/* ── STATUS BAR ── */
+.status-bar {
+  position:fixed; bottom:0; left:0; right:0;
+  background:var(--azul); padding:8px 36px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:11px; color:rgba(255,255,255,0.5);
+  box-shadow:0 -2px 10px rgba(0,0,0,0.15);
+}
+.status-bar .mark { color:rgba(255,255,255,0.8); font-weight:600; }
+.status-dot { width:7px; height:7px; border-radius:50%; background:var(--verde); display:inline-block; margin-right:6px; animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+@media(max-width:900px) {
+  .kpi-row { grid-template-columns:repeat(2,1fr); }
+  .charts-row { grid-template-columns:1fr; }
+  .ofens-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading" id="loading">
+  <div class="load-logo">✕ MAKRO <em>ENGENHARIA</em></div>
+  <div class="load-bar-track"><div class="load-bar-fill"></div></div>
+  <div class="load-txt" id="load-txt">Conectando ao Google Sheets...</div>
+</div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">
+    <svg class="logo-icon" viewBox="0 0 38 38" fill="none">
+      <path d="M3 3 L19 19 L3 35" stroke="#E8351E" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M35 3 L19 19 L35 35" stroke="#E8351E" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div class="logo-name">MAKRO <em>ENGENHARIA</em></div>
+  </div>
+  <div class="header-right">
+    <div class="header-title">DASHBOARD DE MANUTENÇÃO</div>
+    <div class="header-sub">Filial 10101 &nbsp;•&nbsp; <span id="periodo">Carregando...</span> &nbsp;•&nbsp; <span id="ultima-atualiz">—</span></div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="showPage('aderencia',this)">📋 Aderência Preventiva</button>
+  <button class="nav-btn" onclick="showPage('custo',this)">💰 Custo</button>
+  <button class="nav-btn" onclick="showPage('mdo',this)">⏱ Mão de Obra</button>
+  <button class="nav-btn" onclick="showPage('ofensores',this)">⚠️ Ofensores</button>
+</nav>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE 1 — ADERÊNCIA -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page active" id="page-aderencia">
+
+  <div class="sec-head"><div class="sec-bar"></div><div class="sec-title">Indicadores de Aderência Preventiva</div></div>
+
+  <div class="kpi-row">
+    <div class="kpi k-azul">
+      <div class="kpi-lbl">OS Preventivas</div>
+      <div class="kpi-val" id="k-total-prev">—</div>
+      <div class="kpi-desc">Total programado no período</div>
+      <div class="kpi-ico">📋</div>
+    </div>
+    <div class="kpi k-verde">
+      <div class="kpi-lbl">Executadas</div>
+      <div class="kpi-val" id="k-exec">—</div>
+      <div class="kpi-desc">Concluídas com sucesso</div>
+      <div class="kpi-ico">✅</div>
+    </div>
+    <div class="kpi k-verm">
+      <div class="kpi-lbl">Não Executadas</div>
+      <div class="kpi-val" id="k-nao-exec">—</div>
+      <div class="kpi-desc">Pendentes de execução</div>
+      <div class="kpi-ico">⚠️</div>
+    </div>
+    <div class="kpi k-amar">
+      <div class="kpi-lbl">% Aderência</div>
+      <div class="kpi-val" id="k-ader">—</div>
+      <div class="kpi-desc" id="k-ader-desc">Meta: 80%</div>
+      <div class="kpi-ico">📈</div>
+    </div>
+  </div>
+
+  <div class="meta-card">
+    <div class="meta-top">
+      <span class="meta-lbl">Progresso vs Meta (80%)</span>
+      <span class="badge" id="meta-badge">—</span>
+    </div>
+    <div class="track">
+      <div class="fill" id="meta-fill" style="width:0%"></div>
+      <div class="meta-line"></div>
+    </div>
+    <div class="meta-labels">
+      <span>0%</span>
+      <span id="meta-atual" style="font-weight:700">—</span>
+      <span style="color:var(--amarelo);font-weight:700">80% meta</span>
+      <span>100%</span>
+    </div>
+  </div>
+
+  <div class="sec-head"><div class="sec-bar"></div><div class="sec-title">Aderência por Filial</div></div>
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-title"><div class="dot"></div>% Aderência por Filial</div>
+    <div id="filial-chart" style="display:flex;align-items:flex-end;gap:20px;height:200px;padding:10px 0 0 0"></div>
+  </div>
+
+  <div class="sec-head"><div class="sec-bar"></div><div class="sec-title">Detalhamento por Número de Bem</div></div>
+  <div class="table-card">
+    <div class="table-head-bar">
+      <span class="t">Aderência por Nº de Bem</span>
+      <span class="s" id="table-info">—</span>
+    </div>
+    <table>
+      <thead><tr>
+        <th>Nº Bem</th><th>Equipamento</th><th>Filial</th><th>Total Prev.</th><th>Executadas</th>
+        <th>Não Exec.</th><th>Aderência %</th><th>Status</th>
+      </tr></thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+
+  <div class="sec-head" style="margin-top:24px"><div class="sec-bar"></div><div class="sec-title">Equipamentos com Preventiva Não Realizada</div></div>
+  <div class="table-card">
+    <div class="table-head-bar">
+      <span class="t">Pendências por Equipamento</span>
+      <span class="s" id="pend-info">—</span>
+    </div>
+    <table>
+      <thead><tr>
+        <th>Nº Bem</th><th>Equipamento</th><th>Filial</th><th>OS Pendentes</th><th>Status</th>
+      </tr></thead>
+      <tbody id="pend-tbody"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE 2 — CUSTO -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page" id="page-custo">
+  <div class="sec-head"><div class="sec-bar"></div><div class="sec-title">Custo de Manutenção</div></div>
+  <div class="kpi-row">
+    <div class="kpi k-azul">
+      <div class="kpi-lbl">Custo Total</div>
+      <div class="kpi-val" id="c-total">—</div>
+      <div class="kpi-desc">Todos os tipos</div>
+      <div class="kpi-ico">💰</div>
+    </div>
+    <div class="kpi k-verm">
+      <div class="kpi-lbl">Custo Corretiva</div>
+      <div class="kpi-val" id="c-corr">—</div>
+      <div class="kpi-desc" id="c-corr-pct">—</div>
+      <div class="kpi-ico">🔧</div>
+    </div>
+    <div class="kpi k-verde">
+      <div class="kpi-lbl">Custo Preventiva</div>
+      <div class="kpi-val" id="c-prev">—</div>
+      <div class="kpi-desc" id="c-prev-pct">—</div>
+      <div class="kpi-ico">🛡</div>
+    </div>
+    <div class="kpi k-amar">
+      <div class="kpi-lbl">Custo Médio / OS</div>
+      <div class="kpi-val" id="c-medio">—</div>
+      <div class="kpi-desc">Por ordem de serviço</div>
+      <div class="kpi-ico">📊</div>
+    </div>
+  </div>
+
+  <div class="charts-row">
+    <div class="card">
+      <div class="card-title"><div class="dot"></div>Distribuição de Custo por Tipo</div>
+      <div class="bar-list" id="custo-bars"></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><div class="dot"></div>OS por Tipo de Manutenção</div>
+      <div class="donut-wrap">
+        <svg class="donut-svg" viewBox="0 0 120 120" id="donut-os">
+          <circle cx="60" cy="60" r="45" fill="none" stroke="#EEF1F8" stroke-width="18"/>
+        </svg>
+        <div class="legend" id="legend-os"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE 3 — MÃO DE OBRA -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page" id="page-mdo">
+  <div class="sec-head"><div class="sec-bar"></div><div class="sec-title">Apropriação de Mão de Obra</div></div>
+  <div class="kpi-row">
+    <div class="kpi k-azul">
+      <div class="kpi-lbl">Total Horas</div>
+      <div class="kpi-val" id="h-total">—</div>
+      <div class="kpi-desc">Horas registradas no período</div>
+      <div class="kpi-ico">⏱</div>
+    </div>
+    <div class="kpi k-verm">
+      <div class="kpi-lbl">Horas Corretiva</div>
+      <div class="kpi-val" id="h-corr">—</div>
+      <div class="kpi-desc" id="h-corr-pct">—</div>
+      <div class="kpi-ico">🔧</div>
+    </div>
+    <div class="kpi k-verde">
+      <div class="kpi-lbl">Horas Preventiva</div>
+      <div class="kpi-val" id="h-prev">—</div>
+      <div class="kpi-desc" id="h-prev-pct">—</div>
+      <div class="kpi-ico">🛡</div>
+    </div>
+    <div class="kpi k-amar">
+      <div class="kpi-lbl">Média por OS</div>
+      <div class="kpi-val" id="h-medio">—</div>
+      <div class="kpi-desc">Horas médias por OS</div>
+      <div class="kpi-ico">📊</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-title"><div class="dot"></div>Distribuição de Horas por Tipo</div>
+    <div class="bar-list" id="horas-bars"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!-- PAGE 4 — OFENSORES -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="page" id="page-ofensores">
+  <div class="sec-head"><div class="sec-bar"></div><div class="sec-title">Principal Ofensor por Componente</div></div>
+  <div class="ofens-grid" id="ofens-grid"></div>
+</div>
+
+
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-title"><div class="dot"></div>Aderência por Filial (do pior ao melhor)</div>
+    <div class="bar-list" id="filial-bars"></div>
+  </div>
+
+  <div class="table-card">
+    <div class="table-head-bar">
+      <span class="t">Detalhamento por Filial</span>
+      <span class="s" id="filial-table-info">—</span>
+    </div>
+    <table>
+      <thead><tr>
+        <th>Filial</th><th>Total Prev.</th><th>Executadas</th>
+        <th>Não Exec.</th><th>Aderência %</th><th>Status</th>
+      </tr></thead>
+      <tbody id="filial-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <span><span class="status-dot"></span>Dashboard ativo — dados do Google Sheets</span>
+  <span>Filial 10101 &nbsp;•&nbsp; Makro Engenharia &nbsp;•&nbsp; <span class="mark" id="atualiz-footer">—</span></span>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════════
+const SHEET_ID  = '10eBBhc5kIU0ueQtzW5VFH8qkuXqtthPGSgihlBL-K74';
+const ABA       = 'DADOS';
+const FILIAIS   = ['010101','040101','040103'];
+const URL       = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(ABA)}`;
+
+const KEYWORDS = {
+  'Elétrico/Iluminação': /ELÉTRIC|ELETRIC|ILUMINAÇ|FAROL|SENSOR|IGNIÇÃO/i,
+  'Pneu':                /PNEU/i,
+  'Vazamento':           /VAZAMENTO|MANGUEIRA/i,
+  'Hidráulico':          /HIDRÁULIC|HIDRAULIC/i,
+  'Motor':               /MOTOR/i,
+  'Freio\/Cuíca':        /FREIO|CUÍCA|CUICA/i,
+  'Bateria':             /BATERIA/i,
+  'Válvula\/Bico':       /VÁLVULA|VALVULA|BICO/i,
+  'Partida':             /PARTIDA/i,
+  'Alternador':          /ALTERNADOR/i,
+  'Correia':             /CORREIA/i,
+  'Embreagem':           /EMBREAGEM/i,
+};
+
+const COR_TIPO = {
+  'Corretiva':  '#E8351E',
+  'Preventiva': '#1B2B6B',
+  'Preditiva':  '#F4B400',
+};
+
+// ══════════════════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════════════════
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════
+const fmt = n => n.toLocaleString('pt-BR');
+const fmtR = n => 'R$ ' + n.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+const fmtH = n => n.toFixed(1) + 'h';
+
+function setLoad(txt) { document.getElementById('load-txt').textContent = txt; }
+
+function buildDonut(svgId, legendId, segments) {
+  // segments = [{label, value, color}]
+  const total = segments.reduce((a,s) => a + s.value, 0);
+  const R = 45, C = 60, CIRC = 2 * Math.PI * R;
+  let offset = 0;
+  const svg = document.getElementById(svgId);
+  svg.innerHTML = '';
+  // background
+  const bg = document.createElementNS('http://www.w3.org/2000/svg','circle');
+  bg.setAttribute('cx',C); bg.setAttribute('cy',C); bg.setAttribute('r',R);
+  bg.setAttribute('fill','none'); bg.setAttribute('stroke','#EEF1F8'); bg.setAttribute('stroke-width','18');
+  svg.appendChild(bg);
+
+  segments.forEach(s => {
+    if(!s.value) return;
+    const pct = s.value / total;
+    const dash = pct * CIRC;
+    const gap  = CIRC - dash;
+    const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    c.setAttribute('cx',C); c.setAttribute('cy',C); c.setAttribute('r',R);
+    c.setAttribute('fill','none'); c.setAttribute('stroke',s.color); c.setAttribute('stroke-width','18');
+    c.setAttribute('stroke-dasharray',`${dash} ${gap}`);
+    c.setAttribute('stroke-dashoffset', -offset);
+    c.setAttribute('transform',`rotate(-90 ${C} ${C})`);
+    svg.appendChild(c);
+    offset += dash;
+  });
+  // center text
+  const t1 = document.createElementNS('http://www.w3.org/2000/svg','text');
+  t1.setAttribute('x',C); t1.setAttribute('y',56); t1.setAttribute('text-anchor','middle');
+  t1.setAttribute('font-size','13'); t1.setAttribute('font-weight','800'); t1.setAttribute('fill','#1B2B6B');
+  t1.setAttribute('font-family','Barlow Condensed'); t1.textContent = fmt(total);
+  svg.appendChild(t1);
+  const t2 = document.createElementNS('http://www.w3.org/2000/svg','text');
+  t2.setAttribute('x',C); t2.setAttribute('y',69); t2.setAttribute('text-anchor','middle');
+  t2.setAttribute('font-size','9'); t2.setAttribute('fill','#6B7299'); t2.setAttribute('font-family','Barlow');
+  t2.textContent = 'Total OS'; svg.appendChild(t2);
+
+  // legend
+  const leg = document.getElementById(legendId);
+  leg.innerHTML = '';
+  segments.forEach(s => {
+    const li = document.createElement('div'); li.className = 'leg-item';
+    li.innerHTML = `<div class="leg-dot" style="background:${s.color}"></div>
+      <span class="leg-lbl">${s.label}</span>
+      <span class="leg-val">${fmt(s.value)}</span>`;
+    leg.appendChild(li);
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// PROCESS DATA
+// ══════════════════════════════════════════════════════
+function processData(rows, cols) {
+  const idx = {};
+  cols.forEach((c,i) => { idx[c.label || c.id] = i; });
+
+  // Helper to find col index by partial name
+  function ci(name) {
+    const k = Object.keys(idx).find(k => k.includes(name));
+    return k !== undefined ? idx[k] : -1;
+  }
+
+  const iFilial   = ci('Filial');
+  const iFilial1  = ci('Filial1');
+  const iTipoM    = ci('Tipo_Manut');
+  const iTermino  = ci('Termino');
+  const iNomeBem  = ci('Nome_Bem');
+  const iObs      = ci('Observacao');
+  const iCMDO    = ci('Custo_MDO');
+  const iCTroca  = ci('Custo_Troca');
+  const iCMat    = ci('Custo_Material');
+  const iCSubst  = ci('Custo_Substituicao');
+  const iCTerc   = ci('Custo_Terceiros');
+  const iCFerr   = ci('Custo_Ferr');
+  const iRInData = ci('R_Inicio_Man_Data');
+  const iRInHora = ci('R_Inicio_Man_Hora');
+  const iRFimData= ci('R_Fim_Man_Data');
+  const iRFimHora= ci('R_Fim_Man_Hora');
+
+  const val = (row, i) => (i >= 0 && row.c[i] && row.c[i].v !== null) ? String(row.c[i].v).trim() : '';
+  const num = (row, i) => { const v = parseFloat(val(row,i)); return isNaN(v) ? 0 : v; };
+  const isExecutada = (row) => val(row, iTermino).toLowerCase() === 'sim';
+
+  const tipoMap = {'001':'Preventiva','1':'Preventiva','1.0':'Preventiva',
+                   '002':'Corretiva','2':'Corretiva','2.0':'Corretiva',
+                   '003':'Preditiva','3':'Preditiva','3.0':'Preditiva'};
+
+  let filtered = rows.filter(r => {
+    const f = val(r, iFilial);
+    return FILIAIS.includes(f);
+  });
+
+  // Aggregations
+  let totalOS=0, totalPrev=0, execPrev=0;
+  let custoTotal=0, custoTipo={}, osTipo={}, horasTipo={};
+  let eqMap = {}, ofensores = {}, filialMap = {}, pendentesMap = {};
+  Object.keys(KEYWORDS).forEach(k => ofensores[k] = 0);
+
+  // Aderencia por Filial1 - apenas filiais selecionadas
+  rows.forEach(r => {
+    const f2 = val(r, iFilial);
+    if(!FILIAIS.includes(f2)) return;
+    const tipoRaw = val(r, iTipoM);
+    const tipo = tipoMap[tipoRaw] || 'Outros';
+    const filNome = (iFilial1 >= 0 ? val(r, iFilial1) : '') || f2 || 'Sem Filial';
+    if(tipo === 'Preventiva') {
+      if(!filialMap[filNome]) filialMap[filNome] = {total:0, exec:0};
+      filialMap[filNome].total++;
+      if(isExecutada(r)) filialMap[filNome].exec++;
+    }
+  });
+
+  filtered.forEach(r => {
+    totalOS++;
+    const tipoRaw = val(r, iTipoM);
+    const tipo = tipoMap[tipoRaw] || 'Outros';
+    const nomeBem = val(r, iNomeBem);
+    const obs = val(r, iObs).toUpperCase().replace(/MAKRO AMP\|/g,'');
+
+    // Custo
+    const custo = num(r,iCMDO)+num(r,iCTroca)+num(r,iCMat)+num(r,iCSubst)+num(r,iCTerc)+num(r,iCFerr);
+    custoTotal += custo;
+    custoTipo[tipo] = (custoTipo[tipo]||0) + custo;
+    osTipo[tipo]    = (osTipo[tipo]||0) + 1;
+
+    // Horas
+    try {
+      const di = val(r, iRInData); const ti = val(r, iRInHora);
+      const df = val(r, iRFimData); const tf = val(r, iRFimHora);
+      if(di && ti && df && tf && ti !== ':' && tf !== ':') {
+        const parseDate = (d,t) => {
+          const dt = new Date(d);
+          if(isNaN(dt)) return null;
+          const parts = t.split(':');
+          if(parts.length >= 2) { dt.setHours(parseInt(parts[0])||0, parseInt(parts[1])||0); }
+          return dt;
+        };
+        const dtI = parseDate(di, ti); const dtF = parseDate(df, tf);
+        if(dtI && dtF && dtF > dtI) {
+          const h = (dtF - dtI) / 3600000;
+          if(h > 0 && h < 1000) horasTipo[tipo] = (horasTipo[tipo]||0) + h;
+        }
+      }
+    } catch(e) {}
+
+    // Preventiva
+    if(tipo === 'Preventiva') {
+      totalPrev++;
+      if(isExecutada(r)) execPrev++;
+      const bemNum = val(r, ci('Bem'));
+      const filNome2 = (iFilial1 >= 0 ? val(r, iFilial1) : '') || val(r, iFilial) || '—';
+      const eqKey = bemNum || nomeBem;
+      if(!eqMap[eqKey]) eqMap[eqKey] = {bem: bemNum, nome: nomeBem, filial: filNome2, total:0, exec:0};
+      eqMap[eqKey].total++;
+      if(isExecutada(r)) eqMap[eqKey].exec++;
+      // Track pendentes
+      if(!isExecutada(r)) {
+        if(!pendentesMap[eqKey]) pendentesMap[eqKey] = {bem: bemNum, nome: nomeBem, filial: filNome2, count:0};
+        pendentesMap[eqKey].count++;
+      }
+    }
+
+    // Ofensores
+    Object.entries(KEYWORDS).forEach(([k,re]) => {
+      if(re.test(obs)) ofensores[k]++;
+    });
+  });
+
+  const ader = totalPrev > 0 ? execPrev/totalPrev*100 : 0;
+  const horasTotal = Object.values(horasTipo).reduce((a,b)=>a+b,0);
+
+  return { totalOS, totalPrev, execPrev, naoExec: totalPrev-execPrev, ader,
+           custoTotal, custoTipo, osTipo, horasTipo, horasTotal,
+           eqMap, ofensores, filialMap, pendentesMap };
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════════════
+function render(d) {
+  const now = new Date();
+  const dt = now.toLocaleDateString('pt-BR') + ' às ' + now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('ultima-atualiz').textContent = 'Atualizado em ' + dt;
+  document.getElementById('atualiz-footer').textContent = dt;
+  document.getElementById('periodo').textContent = 'Filiais 010101 | 040101 | 040103';
+
+  // ── PAGE 1: ADERÊNCIA ──
+  document.getElementById('k-total-prev').textContent = fmt(d.totalPrev);
+  document.getElementById('k-exec').textContent       = fmt(d.execPrev);
+  document.getElementById('k-nao-exec').textContent   = fmt(d.naoExec);
+  document.getElementById('k-ader').textContent       = d.ader.toFixed(1) + '%';
+  document.getElementById('k-ader-desc').textContent  = d.ader >= 80 ? '✅ Meta atingida' : '⚠️ Abaixo da meta de 80%';
+
+  const baixo = d.ader < 80;
+  const fill = document.getElementById('meta-fill');
+  fill.style.width = Math.min(d.ader, 100) + '%';
+  if(baixo) fill.classList.add('baixo');
+
+  const badge = document.getElementById('meta-badge');
+  badge.textContent = baixo ? '⚠ Abaixo da Meta' : '✅ Meta Atingida';
+  badge.className = 'badge ' + (baixo ? 'abaixo' : 'ok');
+
+  const maCorAder = baixo ? 'var(--verm)' : 'var(--verde)';
+  document.getElementById('meta-atual').style.color = maCorAder;
+  document.getElementById('meta-atual').textContent = d.ader.toFixed(1) + '% atual';
+
+  // Eq bars
+  const eqArr = Object.entries(d.eqMap)
+    .map(([nm,v]) => ({nm, total:v.total, exec:v.exec, ader: v.exec/v.total*100}))
+    .sort((a,b) => a.ader - b.ader);
+  const barsEl = document.getElementById('eq-bars');
+  barsEl.innerHTML = '';
+  eqArr.slice(0,10).forEach(eq => {
+    const cls = eq.ader >= 80 ? 'ok' : eq.ader >= 50 ? 'warn' : 'bad';
+    const pctCls = cls;
+    const div = document.createElement('div'); div.className = 'bar-row2';
+    div.innerHTML = `<span class="bar-nm" title="${eq.nm}">${eq.nm}</span>
+      <div class="bar-track2">
+        <div class="bar-fill2 ${cls}" style="width:${eq.ader}%">
+          <span class="bar-pct2 ${pctCls}">${eq.ader.toFixed(1)}%</span>
+        </div>
+      </div>`;
+    barsEl.appendChild(div);
+  });
+
+  // Donut OS tipo
+  buildDonut('donut-svg','donut-legend', [
+    {label:'Corretiva',  value: d.osTipo['Corretiva']||0,  color:'#E8351E'},
+    {label:'Preventiva', value: d.osTipo['Preventiva']||0, color:'#1B2B6B'},
+    {label:'Preditiva',  value: d.osTipo['Preditiva']||0,  color:'#F4B400'},
+  ]);
+
+  // Table
+  const tbody = document.getElementById('table-body');
+  tbody.innerHTML = '';
+  const eqAll = Object.entries(d.eqMap)
+    .map(([nm,v]) => ({nm, total:v.total, exec:v.exec, nao:v.total-v.exec, ader:v.exec/v.total*100}))
+    .sort((a,b) => a.ader - b.ader);
+  eqAll.forEach(eq => {
+    const cls = eq.ader >= 80 ? 'ok' : eq.ader >= 50 ? 'warn' : 'bad';
+    const lbl = eq.ader >= 80 ? '✅ OK' : eq.ader >= 50 ? '⚠ Atenção' : '❌ Crítico';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><strong>${eq.nm}</strong></td><td>${eq.total}</td><td>${eq.exec}</td>
+      <td>${eq.nao}</td>
+      <td><strong style="color:${eq.ader>=80?'var(--verde)':eq.ader>=50?'var(--amarelo)':'var(--verm)'}">${eq.ader.toFixed(1)}%</strong></td>
+      <td><span class="pill ${cls}">${lbl}</span></td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('table-info').textContent = eqAll.length + ' equipamentos';
+
+  // ── PAGE 2: CUSTO ──
+  document.getElementById('c-total').textContent = fmtR(d.custoTotal);
+  const corr = d.custoTipo['Corretiva']||0, prev2 = d.custoTipo['Preventiva']||0;
+  document.getElementById('c-corr').textContent  = fmtR(corr);
+  document.getElementById('c-prev').textContent  = fmtR(prev2);
+  document.getElementById('c-corr-pct').textContent = d.custoTotal > 0 ? (corr/d.custoTotal*100).toFixed(1)+'% do total' : '—';
+  document.getElementById('c-prev-pct').textContent = d.custoTotal > 0 ? (prev2/d.custoTotal*100).toFixed(1)+'% do total' : '—';
+  document.getElementById('c-medio').textContent = d.totalOS > 0 ? fmtR(d.custoTotal/d.totalOS) : '—';
+
+  const custoBars = document.getElementById('custo-bars');
+  custoBars.innerHTML = '';
+  Object.entries(d.custoTipo).sort((a,b)=>b[1]-a[1]).forEach(([tipo,v]) => {
+    const pct = d.custoTotal > 0 ? v/d.custoTotal*100 : 0;
+    const cls = tipo === 'Corretiva' ? 'bad' : tipo === 'Preventiva' ? 'ok' : 'warn';
+    const div = document.createElement('div'); div.className = 'bar-row2';
+    div.innerHTML = `<span class="bar-nm">${tipo}</span>
+      <div class="bar-track2">
+        <div class="bar-fill2 ${cls}" style="width:${pct}%">
+          <span class="bar-pct2 ${cls}">${pct.toFixed(1)}%</span>
+        </div>
+      </div>`;
+    custoBars.appendChild(div);
+  });
+
+  buildDonut('donut-os','legend-os', [
+    {label:'Corretiva',  value: d.osTipo['Corretiva']||0,  color:'#E8351E'},
+    {label:'Preventiva', value: d.osTipo['Preventiva']||0, color:'#1B2B6B'},
+    {label:'Preditiva',  value: d.osTipo['Preditiva']||0,  color:'#F4B400'},
+  ]);
+
+  // ── PAGE 3: HORAS ──
+  const ht = d.horasTotal;
+  document.getElementById('h-total').textContent = fmtH(ht);
+  const hc = d.horasTipo['Corretiva']||0, hp = d.horasTipo['Preventiva']||0;
+  document.getElementById('h-corr').textContent  = fmtH(hc);
+  document.getElementById('h-prev').textContent  = fmtH(hp);
+  document.getElementById('h-corr-pct').textContent = ht > 0 ? (hc/ht*100).toFixed(1)+'% do total' : '—';
+  document.getElementById('h-prev-pct').textContent = ht > 0 ? (hp/ht*100).toFixed(1)+'% do total' : '—';
+  document.getElementById('h-medio').textContent = d.totalOS > 0 ? fmtH(ht/d.totalOS) : '—';
+
+  const horasBars = document.getElementById('horas-bars');
+  horasBars.innerHTML = '';
+  Object.entries(d.horasTipo).sort((a,b)=>b[1]-a[1]).forEach(([tipo,v]) => {
+    const pct = ht > 0 ? v/ht*100 : 0;
+    const cls = tipo === 'Corretiva' ? 'bad' : tipo === 'Preventiva' ? 'ok' : 'warn';
+    const div = document.createElement('div'); div.className = 'bar-row2';
+    div.innerHTML = `<span class="bar-nm">${tipo}</span>
+      <div class="bar-track2">
+        <div class="bar-fill2 ${cls}" style="width:${pct}%">
+          <span class="bar-pct2 ${cls}">${fmtH(v)} (${pct.toFixed(1)}%)</span>
+        </div>
+      </div>`;
+    horasBars.appendChild(div);
+  });
+
+
+
+  // Pendentes por equipamento
+  const pendArr = Object.values(d.pendentesMap).sort((a,b) => b.count - a.count);
+  document.getElementById('pend-info').textContent = pendArr.length + ' equipamentos com pendência';
+  const pendTbody = document.getElementById('pend-tbody');
+  pendTbody.innerHTML = '';
+  pendArr.forEach((p,i) => {
+    const tr = document.createElement('tr');
+    const cls = p.count >= 5 ? 'bad' : p.count >= 2 ? 'warn' : 'ok';
+    const lbl = p.count >= 5 ? '❌ Crítico' : p.count >= 2 ? '⚠ Atenção' : '⚠ Pendente';
+    tr.innerHTML = `<td><strong>${p.bem}</strong></td><td>${p.nome}</td><td>${p.filial}</td>
+      <td><strong style="color:${p.count>=5?'var(--verm)':p.count>=2?'var(--amarelo)':'var(--soft)'}">${p.count} OS</strong></td>
+      <td><span class="pill ${cls}">${lbl}</span></td>`;
+    pendTbody.appendChild(tr);
+  });
+
+  // ── PAGE 4: OFENSORES ──
+  const ofSort = Object.entries(d.ofensores).sort((a,b)=>b[1]-a[1]);
+  const maxOf  = ofSort[0]?.[1] || 1;
+  const grid   = document.getElementById('ofens-grid');
+  grid.innerHTML = '';
+  ofSort.forEach(([nm,cnt],i) => {
+    const pct = cnt/maxOf*100;
+    const rCls = i===0?'r1':i===1?'r2':i===2?'r3':'';
+    const div = document.createElement('div'); div.className = 'of-row';
+    div.innerHTML = `<div class="of-rank">#${i+1}</div>
+      <div class="of-info">
+        <div class="of-nm">${nm}</div>
+        <div class="of-bar-wrap"><div class="of-bar ${rCls}" style="width:${pct}%"></div></div>
+      </div>
+      <div class="of-cnt">${fmt(cnt)}</div>`;
+    grid.appendChild(div);
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// FETCH DATA
+// ══════════════════════════════════════════════════════
+async function fetchData() {
+  try {
+    setLoad('Buscando dados do Sheets...');
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    const res = await fetch(URL, {signal: controller.signal});
+    clearTimeout(timeout);
+    const txt = await res.text();
+    const json = JSON.parse(txt.substring(txt.indexOf('{'), txt.lastIndexOf('}')+1));
+    const cols = json.table.cols;
+    const rows = json.table.rows;
+    setLoad('Processando ' + rows.length + ' registros...');
+    // DEBUG: log column names
+    console.log('COLUNAS:', cols.map((c,i) => i+':'+( c.label||c.id)));
+    console.log('FILIAL1 idx:', cols.findIndex(c => (c.label||c.id||'').includes('Filial1')));
+    console.log('BEM idx:', cols.findIndex(c => (c.label||c.id||'').includes('Bem')));
+    console.log('TERMINO idx:', cols.findIndex(c => (c.label||c.id||'').includes('Termino')));
+    console.log('Row 0 sample:', rows[0]?.c?.map(c => c?.v));
+    const data = processData(rows, cols);
+    setLoad('Renderizando dashboard...');
+    render(data);
+    setTimeout(() => {
+      document.getElementById('loading').classList.add('hide');
+    }, 600);
+  } catch(e) {
+    console.warn('Sheets offline, usando dados estáticos:', e);
+    setLoad('Usando dados de referência...');
+    const data = {
+      totalOS:1602, totalPrev:183, execPrev:87, naoExec:96, ader:47.5,
+      custoTotal:48338.49,
+      custoTipo:{Corretiva:40687.88, Preventiva:7650.61, Preditiva:0},
+      osTipo:{Corretiva:1418, Preventiva:183, Preditiva:1},
+      horasTotal:10850.6,
+      horasTipo:{Corretiva:9166.2, Preventiva:1684.4, Preditiva:0},
+      ofensores:{'Elétrico/Iluminação':178,'Pneu':115,'Vazamento':83,'Hidráulico':82,'Motor':74,'Freio/Cuíca':40,'Bateria':39,'Válvula/Bico':21,'Partida':21,'Alternador':15,'Correia':14,'Embreagem':10},
+      eqMap:{
+        '665':{bem:'665',nome:'Empilhadeira',filial:'PECEM',total:10,exec:0},
+        '410':{bem:'410',nome:'Guindauto',filial:'PECEM',total:17,exec:0},
+        '957':{bem:'957',nome:'Caminhão Basculante',filial:'PECEM',total:12,exec:0},
+        '291':{bem:'291',nome:'Guindaste Telescópico 130T',filial:'MATRIZ',total:10,exec:0},
+        '772':{bem:'772',nome:'Pá Carregadeira',filial:'PECEM',total:9,exec:0},
+      },
+      filialMap:{
+        'PECEM':{total:96,exec:33},
+        'MATRIZ':{total:45,exec:28},
+        'MAKRO TRANSPORTES':{total:22,exec:4},
+      },
+      pendentesMap:{
+        '665':{bem:'665',nome:'Empilhadeira',filial:'PECEM',count:10},
+        '410':{bem:'410',nome:'Guindauto',filial:'PECEM',count:17},
+        '957':{bem:'957',nome:'Caminhão Basculante',filial:'PECEM',count:12},
+      }
+    };
+    try { render(data); } catch(e2) { console.error('Render error:', e2); }
+    setTimeout(() => { document.getElementById('loading').classList.add('hide'); }, 800);
+  }
+}
+
+fetchData();
+</script>
+</body>
+</html>
