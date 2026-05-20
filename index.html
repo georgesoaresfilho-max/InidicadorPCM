@@ -103,14 +103,14 @@ body { font-family:'Barlow',sans-serif; background:var(--cinza-bg); color:var(--
 .kpi-desc { font-size:11px; color:var(--soft); }
 .kpi-ico { position:absolute; right:16px; bottom:14px; font-size:32px; opacity:0.08; }
 
-/* ── META BAR ── */
-.meta-card {
+/* ──  BAR ── */
+.-card {
   background:white; border-radius:10px; padding:18px 22px;
   border:1px solid var(--borda); box-shadow:0 2px 10px rgba(27,43,107,0.06);
   margin-bottom:20px;
 }
-.meta-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
-.meta-lbl { font-size:11px; font-weight:700; color:var(--soft); text-transform:uppercase; letter-spacing:0.8px; }
+.-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.-lbl { font-size:11px; font-weight:700; color:var(--soft); text-transform:uppercase; letter-spacing:0.8px; }
 .badge {
   font-size:11px; font-weight:700; padding:4px 12px; border-radius:20px;
   text-transform:uppercase; letter-spacing:0.5px;
@@ -127,11 +127,11 @@ body { font-family:'Barlow',sans-serif; background:var(--cinza-bg); color:var(--
   transition: width 1.2s ease;
 }
 .fill.baixo { background: linear-gradient(90deg, var(--verm), #FF6B55); }
-.meta-line {
+.-line {
   position:absolute; top:0; bottom:0; width:2px;
   background:var(--amarelo); left:80%;
 }
-.meta-labels { display:flex; justify-content:space-between; margin-top:6px; font-size:11px; color:var(--soft); }
+.-labels { display:flex; justify-content:space-between; margin-top:6px; font-size:11px; color:var(--soft); }
 
 /* ── CHARTS ROW ── */
 .charts-row { display:grid; grid-template-columns:1.5fr 1fr; gap:14px; margin-bottom:20px; }
@@ -303,7 +303,7 @@ tbody td { padding:9px 14px; font-size:12px; }
     <div class="kpi k-amar">
       <div class="kpi-lbl">% Aderência</div>
       <div class="kpi-val" id="k-ader">—</div>
-      <div class="kpi-desc" id="k-ader-desc">Meta: 80%</div>
+      <div class="kpi-desc" id="k-ader-desc">Meta: 90%</div>
       <div class="kpi-ico">📈</div>
     </div>
   </div>
